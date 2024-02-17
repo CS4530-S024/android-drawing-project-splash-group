@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.example.drawing_prototype.databinding.StartScreenBinding
 
 // This StartScreenFragment displays the start screen of the application
+// Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
 class StartScreenFragment : Fragment()  {
 
     private var startButtonListener : () -> Unit = {}
