@@ -5,11 +5,14 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.view.marginStart
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -32,9 +35,13 @@ class DrawingBoardFragment : Fragment() {
         binding = DrawingBoardBinding.inflate(inflater)
         // Initialize VM
         drawingBoardModel = ViewModelProvider(requireActivity()).get(DrawingBoardModel::class.java)
+
+        if(drawingBoardModel.isInitialize() == 0){
+            drawingBoardModel.initializeModel(binding.drawingBoard.width, binding.drawingBoard.height)
+        }
+
         // Initialize the drawing board with bitmap and painter from VM
         binding.drawingBoard.initializeDrawingBoard(drawingBoardModel.bitmap.value!!, drawingBoardModel.paint)
-
 
         return binding.root
     }
@@ -44,14 +51,12 @@ class DrawingBoardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // setup user interact handlers
-        setupTouchHandler()
         setupTextChangeWatcher()
         setupColorAndShapeSelectors()
 
         drawingBoardModel.bitmap.observe(viewLifecycleOwner, Observer {
             binding.drawingBoard.updateBitmap(it)
         })
-
     }
 
     // Set up listeners for changing painter color and shape
@@ -75,25 +80,7 @@ class DrawingBoardFragment : Fragment() {
         binding.rectangle.setOnClickListener { drawingBoardModel.updateType("rectangle") }
     }
 
-    // Setup touch handler. Draw on the drawing board it user interact location
-    fun setupTouchHandler(){
-        view?.setOnTouchListener { v, event ->
-
-            val x = event.x
-            val y = event.y
-
-            when(event.action) {
-                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                    v.performClick()
-                    drawingBoardModel.draw(x, y)
-                    true
-                }
-                else -> false
-            }
-        }
-    }
-
-    // Sets up a listener for change the pen size
+        // Sets up a listener for change the pen size
     fun setupTextChangeWatcher(){
         binding.penSizeBox.addTextChangedListener(object : TextWatcher {
 

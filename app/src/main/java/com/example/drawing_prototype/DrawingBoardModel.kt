@@ -15,6 +15,7 @@ class DrawingBoardModel: ViewModel() {
     // MutableLiveData for observer changes on current bitmap
     lateinit var bitmap: MutableLiveData<Bitmap>
 
+    private var initialize: Int = 0
     // Initial pen
     val paint = Paint()
     var size_of_paint: Float = 20.0f
@@ -23,15 +24,16 @@ class DrawingBoardModel: ViewModel() {
     private lateinit var bitmapCanvas: Canvas
 
     // Initialize the model, create a square bimap and set default value for pen color and size
-    fun initializeModel(){
+    fun initializeModel(width : Int, height : Int){
         paint.color = Color.BLACK
         // Create a new square bitmap with width 1024
-        bitmap = MutableLiveData(android.graphics.Bitmap.createBitmap(1024, 1024,
+        bitmap = MutableLiveData(android.graphics.Bitmap.createBitmap(1100, 1100,
             android.graphics.Bitmap.Config.ARGB_8888))
         bitmapCanvas = Canvas(bitmap.value!!)
         // Set the background color to white
         bitmapCanvas.drawColor(Color.WHITE)
         size_of_paint = 20.0f
+        initialize = 1
     }
 
     // Update pen type
@@ -47,6 +49,10 @@ class DrawingBoardModel: ViewModel() {
     // Update pen size
     fun updateSizeOfPaint(size: Float){
         size_of_paint = size
+    }
+
+    fun isInitialize(): Int {
+        return initialize
     }
 
     //draws to our bitmap.

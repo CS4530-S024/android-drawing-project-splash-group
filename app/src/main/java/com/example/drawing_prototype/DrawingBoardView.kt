@@ -6,8 +6,11 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.activity.viewModels
+import kotlin.math.log
 
 // A drawing board class contains function to display and draw on a bitmap
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
@@ -18,6 +21,27 @@ class DrawingBoardView(context: Context, attrs: AttributeSet) : View(context, at
 
 
     private val rect: Rect by lazy { Rect(6,4,width, height) }
+
+    init {
+        setupTouchHandler()
+    }
+
+    fun setupTouchHandler() {
+        setOnTouchListener { v, event ->
+
+            val x = event.x
+            val y = event.y
+
+            when(event.action) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                    v.performClick()
+                    (context as? MainActivity)?.drawingBoardModel?.draw(x, y)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
 
     // Set up the drawing board
     // Initialize the drawing board with bitmap and paint.

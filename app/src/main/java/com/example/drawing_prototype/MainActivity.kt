@@ -12,6 +12,7 @@ import com.example.drawing_prototype.databinding.ActivityMainBinding
 // MainActivity for the drawing board application
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
 class MainActivity : AppCompatActivity() {
+    lateinit var drawingBoardModel: DrawingBoardModel
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,8 +22,7 @@ class MainActivity : AppCompatActivity() {
         val child = binding.fragmentContainerView.getFragment<Fragment>()
 
         // initialize the drawing board VM
-        val drawingBoardModel = ViewModelProvider(this).get(DrawingBoardModel::class.java)
-        drawingBoardModel.initializeModel()
+        drawingBoardModel = ViewModelProvider(this).get(DrawingBoardModel::class.java)
 
         when(child){
             // If the current fragment is start screen
