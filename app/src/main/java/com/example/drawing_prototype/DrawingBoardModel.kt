@@ -4,16 +4,18 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 
 // VM contains function to setup the bitmap, store change the pen's size, color, and shape,
 // And draw color on the drawing board touch location
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
-class DrawingBoardModel: ViewModel() {
+class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewModel() {
     // MutableLiveData for observer changes on current bitmap
-    lateinit var bitmap: MutableLiveData<Bitmap>
+    var bitmap: MutableStateFlow<Bitmap?> = MutableStateFlow(null)
 
     private var initialize: Int = 0
     // Initial pen
@@ -27,13 +29,21 @@ class DrawingBoardModel: ViewModel() {
     fun initializeModel(width : Int, height : Int){
         paint.color = Color.BLACK
         // Create a new square bitmap with width 1024
-        bitmap = MutableLiveData(android.graphics.Bitmap.createBitmap(1100, 1100,
-            android.graphics.Bitmap.Config.ARGB_8888))
-        bitmapCanvas = Canvas(bitmap.value!!)
+        val newBitmap = Bitmap.createBitmap(1100, 1100, android.graphics.Bitmap.Config.ARGB_8888)
+        bitmapCanvas = Canvas(newBitmap)
         // Set the background color to white
         bitmapCanvas.drawColor(Color.WHITE)
         size_of_paint = 20.0f
         initialize = 1
+        bitmap.value = newBitmap
+    }
+
+    fun saveCurrentBitmap() {
+        bitmap.value?.let { bmp ->
+            viewModelScope.launch {
+                repository.storePicture(bmp)
+            }
+        }
     }
 
     // Update pen type

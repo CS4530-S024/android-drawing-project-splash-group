@@ -5,18 +5,17 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.core.view.marginStart
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.drawing_prototype.databinding.DrawingBoardBinding
+import kotlinx.coroutines.launch
 
 // Fragment class for the drawing board
 // This class set up the drawing board and listen interaction event from the user
@@ -54,9 +53,19 @@ class DrawingBoardFragment : Fragment() {
         setupTextChangeWatcher()
         setupColorAndShapeSelectors()
 
-        drawingBoardModel.bitmap.observe(viewLifecycleOwner, Observer {
-            binding.drawingBoard.updateBitmap(it)
-        })
+//        drawingBoardModel.bitmap.observe(viewLifecycleOwner, Observer {
+//            binding.drawingBoard.updateBitmap(it)
+//        })
+
+        viewLifecycleOwner.lifecycleScope.launch() {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                drawingBoardModel.bitmap.collect { bitmap ->
+                    bitmap?.let {
+                        binding.drawingBoard.updateBitmap(it)
+                    }
+                }
+            }
+        }
     }
 
     // Set up listeners for changing painter color and shape
