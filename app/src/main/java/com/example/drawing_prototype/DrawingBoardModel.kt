@@ -1,21 +1,35 @@
 package com.example.drawing_prototype
 
+import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 
 // VM contains function to setup the bitmap, store change the pen's size, color, and shape,
 // And draw color on the drawing board touch location
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
-class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewModel() {
+class DrawingBoardModel(application: Application): AndroidViewModel(application) {
     // MutableLiveData for observer changes on current bitmap
-    var bitmap: MutableStateFlow<Bitmap?> = MutableStateFlow(null)
+
+    private var repository: DrawingBoardRepository? = null
+
+    init {
+        val scope = CoroutineScope(SupervisorJob())
+        repository = DrawingBoardRepository(application.applicationContext, scope)
+    }
+
+    lateinit var bitmap: MutableLiveData<Bitmap>
 
     private var initialize: Int = 0
     // Initial pen
@@ -29,19 +43,25 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
     fun initializeModel(width : Int, height : Int){
         paint.color = Color.BLACK
         // Create a new square bitmap with width 1024
-        val newBitmap = Bitmap.createBitmap(1100, 1100, android.graphics.Bitmap.Config.ARGB_8888)
-        bitmapCanvas = Canvas(newBitmap)
+        bitmap = MutableLiveData(android.graphics.Bitmap.createBitmap(1100, 1100,
+            android.graphics.Bitmap.Config.ARGB_8888))
+        bitmapCanvas = Canvas(bitmap.value!!)
         // Set the background color to white
         bitmapCanvas.drawColor(Color.WHITE)
         size_of_paint = 20.0f
         initialize = 1
-        bitmap.value = newBitmap
     }
 
-    fun saveCurrentBitmap() {
+    fun drawBitmap(localBitmap: Bitmap) {
+        val mutableBitmap = localBitmap.copy(Bitmap.Config.ARGB_8888, true)
+        bitmap.value = mutableBitmap
+        bitmapCanvas = Canvas(mutableBitmap)
+    }
+
+    fun saveCurrentBitmap(fileName: String) {
         bitmap.value?.let { bmp ->
             viewModelScope.launch {
-                repository.storePicture(bmp)
+                repository?.storePicture(bmp, fileName)
             }
         }
     }
@@ -90,5 +110,20 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
             x+size_of_paint, y-size_of_paint, paint )
         bitmap.value = bitmap.value
 
+    }
+
+
+    fun getAllPicture(): LiveData<List<DrawingBoard>>? {
+        return repository?.getAllPicture()
+    }
+}
+
+class DrawingBoardViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(DrawingBoardModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return DrawingBoardModel(application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

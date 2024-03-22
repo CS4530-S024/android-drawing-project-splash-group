@@ -1,44 +1,49 @@
 package com.example.drawing_prototype
 
-import android.graphics.Color
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.drawing_prototype.databinding.ActivityMainBinding
 
 // MainActivity for the drawing board application
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
 class MainActivity : AppCompatActivity() {
-    lateinit var drawingBoardModel: DrawingBoardModel
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
-        // inflates the layout for main activity
-        val binding = ActivityMainBinding.inflate(layoutInflater)
-        val child = binding.fragmentContainerView.getFragment<Fragment>()
+    val drawingBoardModel: DrawingBoardModel by viewModels {
+        DrawingBoardViewModelFactory(application)
+    }
 
-        // initialize the drawing board VM
-        drawingBoardModel = ViewModelProvider(this).get(DrawingBoardModel::class.java)
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            val binding = ActivityMainBinding.inflate(layoutInflater)
+            val child = binding.fragmentContainerView.getFragment<Fragment>()
 
-        when(child){
-            // If the current fragment is start screen
-            // Set Function for start button click
-            is StartScreenFragment -> child.setStartButtonFunction {
-                // replace the StartScreenFragment with DrawingBoardFragment to display the drawing board
-                val drawFragment = DrawingBoardFragment()
-                val transaction = this.supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.fragmentContainerView, drawFragment, "draw_tag")
-                transaction.addToBackStack(null)
-                transaction.commit()
+
+
+            when (child) {
+                is StartScreenFragment -> child.setStartButtonFunction {
+                    val drawFragment = DrawingBoardFragment()
+                    val transaction = this.supportFragmentManager.beginTransaction()
+                    transaction.replace(R.id.fragmentContainerView, drawFragment, "draw_tag")
+                    transaction.addToBackStack(null)
+                    transaction.commit()
+                }
+
+                is DrawingBoardFragment -> {
+                    // Handle DrawingBoardFragment specific logic if needed
+                }
+                // Add more cases as necessary for other fragments
             }
-            is DrawingBoardFragment -> {}
+
+            setContentView(binding.root)
+
+            if(drawingBoardModel.isInitialize() == 0){
+                drawingBoardModel.initializeModel(1100, 1100)
+            }
         }
 
-        setContentView(binding.root)
-
-    }
 }

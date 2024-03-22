@@ -1,5 +1,8 @@
 package com.example.drawing_prototype
 
+import android.annotation.SuppressLint
+import android.content.DialogInterface
+import android.content.DialogInterface.OnClickListener
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -8,21 +11,22 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.example.drawing_prototype.databinding.DrawingBoardBinding
-import kotlinx.coroutines.launch
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 // Fragment class for the drawing board
 // This class set up the drawing board and listen interaction event from the user
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
 class DrawingBoardFragment : Fragment() {
 
-    lateinit var drawingBoardModel: DrawingBoardModel
+    val drawingBoardModel: DrawingBoardModel by activityViewModels {
+        DrawingBoardViewModelFactory(requireActivity().application)
+    }
     lateinit var binding: DrawingBoardBinding
 
     override fun onCreateView(
@@ -32,8 +36,6 @@ class DrawingBoardFragment : Fragment() {
 
         // Inflate the layout for this fragment
         binding = DrawingBoardBinding.inflate(inflater)
-        // Initialize VM
-        drawingBoardModel = ViewModelProvider(requireActivity()).get(DrawingBoardModel::class.java)
 
         if(drawingBoardModel.isInitialize() == 0){
             drawingBoardModel.initializeModel(binding.drawingBoard.width, binding.drawingBoard.height)
@@ -45,6 +47,7 @@ class DrawingBoardFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,18 +56,22 @@ class DrawingBoardFragment : Fragment() {
         setupTextChangeWatcher()
         setupColorAndShapeSelectors()
 
-//        drawingBoardModel.bitmap.observe(viewLifecycleOwner, Observer {
-//            binding.drawingBoard.updateBitmap(it)
-//        })
+        drawingBoardModel.bitmap.observe(viewLifecycleOwner, Observer {
+            binding.drawingBoard.updateBitmap(it)
+        })
 
-        viewLifecycleOwner.lifecycleScope.launch() {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                drawingBoardModel.bitmap.collect { bitmap ->
-                    bitmap?.let {
-                        binding.drawingBoard.updateBitmap(it)
+        binding.saveBitmapButton.setOnClickListener {
+            val dialogView = layoutInflater.inflate(R.layout.dialog_bitmap_name, null, false)
+            val bitmapNameEditText = dialogView.findViewById<EditText>(R.id.bitmapNameEditText)
+            MaterialAlertDialogBuilder(requireContext())
+                .setView(dialogView)
+                .setPositiveButton("OK", object : OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        val fileName = bitmapNameEditText.text.toString()
+                        drawingBoardModel.saveCurrentBitmap(fileName)
                     }
-                }
-            }
+                })
+                .show()
         }
     }
 
@@ -89,7 +96,7 @@ class DrawingBoardFragment : Fragment() {
         binding.rectangle.setOnClickListener { drawingBoardModel.updateType("rectangle") }
     }
 
-        // Sets up a listener for change the pen size
+    // Sets up a listener for change the pen size
     fun setupTextChangeWatcher(){
         binding.penSizeBox.addTextChangedListener(object : TextWatcher {
 
