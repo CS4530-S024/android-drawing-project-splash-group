@@ -36,6 +36,7 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
     val paint = Paint()
     var size_of_paint: Float = 20.0f
     var paint_type = "circle"
+    var filename = ""
     // Canvas for the bitmap, use for drawing
     private lateinit var bitmapCanvas: Canvas
 
@@ -50,6 +51,20 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         bitmapCanvas.drawColor(Color.WHITE)
         size_of_paint = 20.0f
         initialize = 1
+        filename = ""
+    }
+
+    fun initializeModel(width : Int, height : Int, fileName:String){
+        paint.color = Color.BLACK
+        // Create a new square bitmap with width 1024
+        bitmap = MutableLiveData(android.graphics.Bitmap.createBitmap(1100, 1100,
+            android.graphics.Bitmap.Config.ARGB_8888))
+        bitmapCanvas = Canvas(bitmap.value!!)
+        // Set the background color to white
+        bitmapCanvas.drawColor(Color.WHITE)
+        size_of_paint = 20.0f
+        initialize = 1
+        filename = fileName
     }
 
     fun drawBitmap(localBitmap: Bitmap) {
@@ -66,11 +81,21 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         }
     }
 
-
+    fun openOldDrawingBoard(fileName: String){
+        val Bitmap = repository.loadBitmap(fileName)
+        initializeModel(1100, 1100, fileName)
+        drawBitmap(Bitmap)
+    }
     // Update pen type
     fun updateType(string: String){
         paint_type = string
     }
+
+    fun checkFileName(): String{
+        return filename
+    }
+
+
 
     // Update pen color
     fun updatePaintColor(color: Int){
@@ -130,6 +155,8 @@ class DrawingBoardViewModelFactory(private val repository: DrawingBoardRepositor
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+
+
 
 /*
 class DrawingBoardViewModelFactory(private val application: Application) : ViewModelProvider.Factory {

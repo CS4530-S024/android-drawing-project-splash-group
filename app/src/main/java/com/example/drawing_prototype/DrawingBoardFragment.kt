@@ -68,17 +68,23 @@ class DrawingBoardFragment : Fragment() {
         })
 
         binding.saveBitmapButton.setOnClickListener {
-            val dialogView = layoutInflater.inflate(R.layout.dialog_bitmap_name, null, false)
-            val bitmapNameEditText = dialogView.findViewById<EditText>(R.id.bitmapNameEditText)
-            MaterialAlertDialogBuilder(requireContext())
-                .setView(dialogView)
-                .setPositiveButton("OK", object : OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        val fileName = bitmapNameEditText.text.toString()
-                        drawingBoardModel.saveCurrentBitmap(fileName)
-                    }
-                })
-                .show()
+            val fn = drawingBoardModel.checkFileName()
+            if(fn == ""){
+                val dialogView = layoutInflater.inflate(R.layout.dialog_bitmap_name, null, false)
+                val bitmapNameEditText = dialogView.findViewById<EditText>(R.id.bitmapNameEditText)
+                MaterialAlertDialogBuilder(requireContext())
+                    .setView(dialogView)
+                    .setPositiveButton("OK", object : OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            val fileName = bitmapNameEditText.text.toString()
+                            drawingBoardModel.saveCurrentBitmap(fileName)
+                        }
+                    })
+                    .show()
+            }else{
+                drawingBoardModel.saveCurrentBitmap(fn)
+            }
+
         }
     }
 

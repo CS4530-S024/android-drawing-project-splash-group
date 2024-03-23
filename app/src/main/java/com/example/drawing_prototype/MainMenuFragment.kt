@@ -40,6 +40,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import java.io.File
 
@@ -50,12 +52,15 @@ import java.io.File
  * create an instance of this fragment.
  */
 class MainMenuFragment : Fragment() {
+    lateinit var drawingBoardModel: DrawingBoardModel
     override fun onCreateView(inflater: LayoutInflater, container:ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val binding = FragmentMainMenuBinding.inflate(layoutInflater)
+        val navController = findNavController()
+        drawingBoardModel = ViewModelProvider(requireActivity()).get(DrawingBoardModel::class.java)
         binding.composeView1.setContent {
-            MyComposable(Modifier.padding(16.dp)){
-                findNavController().navigate(R.id.action_MainMenuFragment_to_drawingBoardFragment)
+            MyComposable(navController, Modifier.padding(16.dp)){
+                navController.navigate(R.id.action_MainMenuFragment_to_drawingBoardFragment)
             }
         }
         return binding.root
@@ -63,12 +68,11 @@ class MainMenuFragment : Fragment() {
 }
 
 @Composable
-fun MyComposable(modifier:Modifier = Modifier, viewModel: DrawingBoardModel = viewModel(
+fun MyComposable(navController: NavController, modifier:Modifier = Modifier, viewModel: DrawingBoardModel = viewModel(
     viewModelStoreOwner = LocalContext.current.findActivity()
 ),
                  onClick: ()->Unit){
         val context = LocalContext.current
-
         Scaffold(floatingActionButton = {
             ExtendedFloatingActionButton(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -110,7 +114,7 @@ fun MyComposable(modifier:Modifier = Modifier, viewModel: DrawingBoardModel = vi
                                     if (File(filePath).exists()) {
                                         val imgBitmap = BitmapFactory.decodeFile(File(filePath).absolutePath)
                                         val painter = rememberImagePainter(data = imgBitmap)
-                                        Drawingboard(painter, fileName)
+                                        Drawingboard(painter, fileName, viewModel, navController)
                                     }
                                 }
                             }
@@ -140,7 +144,7 @@ fun SayHello(){
 
 
 @Composable
-fun Drawingboard(painter: Painter, fileName: String, modifier: Modifier = Modifier) {
+fun Drawingboard(painter: Painter, fileName: String, vm : DrawingBoardModel, navController: NavController, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .background(MaterialTheme.colorScheme.surface)
@@ -164,7 +168,9 @@ fun Drawingboard(painter: Painter, fileName: String, modifier: Modifier = Modifi
             contentPadding = PaddingValues(top = 0.dp, bottom = 0.dp, start = 16.dp, end = 16.dp),
             onClick = {
                 // to do
-                //uriHandler.openUri(fact.source_url)
+                vm.openOldDrawingBoard(fileName)
+                navController.navigate(R.id.action_MainMenuFragment_to_drawingBoardFragment)
+
             }) {
             Text(text = "open",
                 style = MaterialTheme.typography.labelSmall,
@@ -173,9 +179,11 @@ fun Drawingboard(painter: Painter, fileName: String, modifier: Modifier = Modifi
     }
 }
 
+/*
 @Preview
 @Composable
 fun DrawingBoardPreview(){
     val painter = painterResource(id = R.drawable.pikachu)
-    Drawingboard(painter,"pikachu")
+    Drawingboard(painter,"pikachu", viewModel: viewModel = DrawingBoardModel)
 }
+*/

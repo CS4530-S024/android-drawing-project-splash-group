@@ -2,6 +2,7 @@ package com.example.drawing_prototype
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
@@ -38,6 +39,11 @@ class DrawingBoardRepository(private val context: Context, private val scope: Co
         return dao.getAllPicture()
     }
      */
+
+    fun loadBitmap(fileName: String): Bitmap {
+        val filePath = File(context.filesDir, "$fileName.png")
+        return  BitmapFactory.decodeFile(filePath.absolutePath)
+    }
 
     suspend fun savePicture(bitmap: Bitmap, fileName: String): DrawingBoard? {
         return try {
