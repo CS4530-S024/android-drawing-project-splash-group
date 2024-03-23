@@ -73,6 +73,7 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         bitmapCanvas = Canvas(mutableBitmap)
     }
 
+    // This will save the current bitmap
     fun saveCurrentBitmap(fileName: String) {
         bitmap.value?.let { bmp ->
             viewModelScope.launch {
@@ -138,12 +139,6 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
 
     }
 
-/*
-    fun getAllPicture(): LiveData<List<DrawingBoard>> {
-        return repository.allDrawingBoard
-    }
-
- */
 }
 
 class DrawingBoardViewModelFactory(private val repository: DrawingBoardRepository) : ViewModelProvider.Factory {
@@ -155,18 +150,3 @@ class DrawingBoardViewModelFactory(private val repository: DrawingBoardRepositor
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-
-
-
-/*
-class DrawingBoardViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(DrawingBoardModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return DrawingBoardModel(application) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
-
- */

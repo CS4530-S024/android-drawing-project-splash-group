@@ -37,11 +37,6 @@ class MainActivity : AppCompatActivity() {
             super.onCreate(savedInstanceState)
             enableEdgeToEdge()
 
-            //val drawingBoardModel: DrawingBoardModel by viewModels {
-            //    DrawingBoardViewModelFactory((application as DrawingBoardApplication).DrawingBoardRepository)
-            //}
-
-
             val factory = DrawingBoardViewModelFactory((application as DrawingBoardApplication).DrawingBoardRepository)
             drawingBoardModel = ViewModelProvider(this, factory).get(DrawingBoardModel::class.java)
 
@@ -51,34 +46,7 @@ class MainActivity : AppCompatActivity() {
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
                 insets
             }
-            /*
-            val binding = ActivityMainBinding.inflate(layoutInflater)
-            val child = binding.fragmentContainerView.getFragment<Fragment>()
 
-
-
-            when (child) {
-                is StartScreenFragment -> child.setStartButtonFunction {
-                    val drawFragment = DrawingBoardFragment()
-                    val transaction = this.supportFragmentManager.beginTransaction()
-                    transaction.replace(R.id.fragmentContainerView, drawFragment, "draw_tag")
-                    transaction.addToBackStack(null)
-                    transaction.commit()
-                }
-
-                is DrawingBoardFragment -> {
-                    // Handle DrawingBoardFragment specific logic if needed
-                }
-                // Add more cases as necessary for other fragments
-            }
-
-            setContentView(binding.root)
-
-            if(drawingBoardModel.isInitialize() == 0){
-                drawingBoardModel.initializeModel(1100, 1100)
-            }
-
-             */
         }
 
 }

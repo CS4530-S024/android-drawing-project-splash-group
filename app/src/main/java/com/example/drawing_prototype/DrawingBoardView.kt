@@ -18,6 +18,7 @@ class DrawingBoardView(context: Context, attrs: AttributeSet) : View(context, at
 
     private val rect: Rect by lazy { Rect(6,4,width, height) }
 
+    // When it initialize, setup touch handler
     init {
         setupTouchHandler()
     }

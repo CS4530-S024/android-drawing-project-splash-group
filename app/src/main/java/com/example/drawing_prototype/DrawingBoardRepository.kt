@@ -26,25 +26,13 @@ class DrawingBoardRepository(private val context: Context, private val scope: Co
 
     val allDrawingBoard = dao.allDawingBoard()
 
-    /*
-    init {
-        val db: DrawingBoardDatabase = DrawingBoardDatabase.getDatabase(context.applicationContext)
-        drawingBoardDao = db.drawingBoardDao()
-    }
-
-     */
-
-    /*
-    fun getAllPicture(): LiveData<List<DrawingBoard>>? {
-        return dao.getAllPicture()
-    }
-     */
-
+    // This will load a picture from repository
     fun loadBitmap(fileName: String): Bitmap {
         val filePath = File(context.filesDir, "$fileName.png")
         return  BitmapFactory.decodeFile(filePath.absolutePath)
     }
 
+    // This will save the picture in repository
     suspend fun savePicture(bitmap: Bitmap, fileName: String): DrawingBoard? {
         return try {
             val file = File(context.filesDir, "$fileName.png")
@@ -69,9 +57,7 @@ class DrawingBoardRepository(private val context: Context, private val scope: Co
         }
     }
 
-
-
-
+    // This will save the picture in repository
     fun storePicture(bitmap: Bitmap, fileName: String) {
         scope.launch {
             val savedEntity = savePicture(bitmap, fileName)

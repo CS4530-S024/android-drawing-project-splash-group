@@ -25,11 +25,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
 class DrawingBoardFragment : Fragment() {
 
-    /*
-    val drawingBoardModel: DrawingBoardModel by activityViewModels {
-        DrawingBoardViewModelFactory(requireActivity())
-    }
-     */
     lateinit var drawingBoardModel: DrawingBoardModel
     lateinit var binding: DrawingBoardBinding
 

@@ -1,11 +1,20 @@
 package com.example.drawing_prototype
 
+import android.content.Context
+import android.graphics.Bitmap
 import androidx.lifecycle.Observer
 import androidx.lifecycle.testing.TestLifecycleOwner
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import org.mockito.Mockito.mock
+
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,15 +31,26 @@ import org.junit.Before
 class InstrumentedTestForDrawingViewModel {
     private lateinit var model: DrawingBoardModel
     private lateinit var lifecycleOwner: TestLifecycleOwner
+    private lateinit var repository: DrawingBoardRepository
+    private lateinit var context: Context
+    private val testScope = TestCoroutineScope()
 
-    /*
     /**
      * initialize the model
      */
     @Before
     fun initialize(){
-        model = DrawingBoardModel().apply {
-            initializeModel()
+
+        context = ApplicationProvider.getApplicationContext<Context>()
+
+        // Build an in-memory Room database
+        val db = Room.inMemoryDatabaseBuilder(
+            context, DrawingBoardDatabase::class.java).allowMainThreadQueries().build()
+        val dao = db.drawingBoardDao()
+
+        repository = DrawingBoardRepository(context, testScope, dao)
+        model = DrawingBoardModel(repository).apply {
+            initializeModel(1100, 1100)
         }
 
         lifecycleOwner = TestLifecycleOwner()
@@ -80,8 +100,34 @@ class InstrumentedTestForDrawingViewModel {
             assertTrue("Draw a rectangle can be triggered bitmap observer",callbackFired)
             model.bitmap.removeObserver(observer)
 
+
+            //Test whether it can store image correct
+            val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888) // Create a test bitmap
+            val fileName = "test_image"
+            val savedDrawingBoard = repository.savePicture(bitmap, fileName)
+            // Verify the file was created
+            val file = File(context.filesDir, "$fileName.png")
+            assert(file.exists())
+            // Verify the DrawingBoard entity was saved
+            assertNotNull(savedDrawingBoard)
+
+
+            // Test whether it can load Bitmap correct
+            val test_load_bitmap = repository.loadBitmap("test_image")
+            fun bitmapsAreEqual(first: Bitmap, second: Bitmap): Boolean {
+                if (first.width != second.width || first.height != second.height) return false
+
+                for (y in 0 until first.height) {
+                    for (x in 0 until first.width) {
+                        if (first.getPixel(x, y) != second.getPixel(x, y)) return false
+                    }
+                }
+                return true
+            }
+            assertTrue("Loaded bitmap does not match the original", bitmapsAreEqual(bitmap, test_load_bitmap))
+
         }
     }
 
-     */
+
 }

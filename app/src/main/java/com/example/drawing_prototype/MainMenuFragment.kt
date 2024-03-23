@@ -125,17 +125,6 @@ fun MyComposable(navController: NavController, modifier:Modifier = Modifier, vie
     }
 }
 
-/*
-fun checkFilePath(file : String){
-    if (file.isNotEmpty()) {
-        val filePath = "${requireContext().filesDir}/$file.png"
-        if (File(filePath).exists()) {
-            val localBitmap = BitmapFactory.decodeFile(filePath)
-        }
-    }
-}
-
- */
 
 @Composable
 fun SayHello(){
@@ -179,11 +168,3 @@ fun Drawingboard(painter: Painter, fileName: String, vm : DrawingBoardModel, nav
     }
 }
 
-/*
-@Preview
-@Composable
-fun DrawingBoardPreview(){
-    val painter = painterResource(id = R.drawable.pikachu)
-    Drawingboard(painter,"pikachu", viewModel: viewModel = DrawingBoardModel)
-}
-*/
