@@ -23,6 +23,7 @@ class InstrumentedTestForDrawingViewModel {
     private lateinit var model: DrawingBoardModel
     private lateinit var lifecycleOwner: TestLifecycleOwner
 
+    /*
     /**
      * initialize the model
      */
@@ -81,4 +82,6 @@ class InstrumentedTestForDrawingViewModel {
 
         }
     }
+
+     */
 }

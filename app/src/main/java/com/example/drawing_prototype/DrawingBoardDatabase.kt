@@ -9,6 +9,8 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import kotlinx.coroutines.flow.Flow
+
 //this is a DB, we have 1 entity (so we'll get 1 table in SQLite)
 //the version stuff is for managing DB migrations
 
@@ -59,8 +61,9 @@ interface DrawingBoardDao {
     @Query("UPDATE drawing_board SET timestamp=:timestamp WHERE id=:id")
     fun updatePicture(timestamp: Long, id: Int)
 
-    @Query("SELECT * FROM drawing_board")
-    fun getAllPicture(): LiveData<List<DrawingBoard>>
+    @Query("SELECT * FROM drawing_board ORDER BY fileName")
+    //fun getAllPicture(): LiveData<List<DrawingBoard>>
+    fun allDawingBoard(): Flow<List<DrawingBoard>>
 
 
 }

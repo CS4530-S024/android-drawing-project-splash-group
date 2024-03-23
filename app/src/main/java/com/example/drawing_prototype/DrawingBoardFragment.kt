@@ -16,6 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.drawing_prototype.databinding.DrawingBoardBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -24,9 +25,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
 class DrawingBoardFragment : Fragment() {
 
+    /*
     val drawingBoardModel: DrawingBoardModel by activityViewModels {
-        DrawingBoardViewModelFactory(requireActivity().application)
+        DrawingBoardViewModelFactory(requireActivity())
     }
+     */
+    lateinit var drawingBoardModel: DrawingBoardModel
     lateinit var binding: DrawingBoardBinding
 
     override fun onCreateView(
@@ -36,6 +40,9 @@ class DrawingBoardFragment : Fragment() {
 
         // Inflate the layout for this fragment
         binding = DrawingBoardBinding.inflate(inflater)
+
+        drawingBoardModel = ViewModelProvider(requireActivity()).get(DrawingBoardModel::class.java)
+
 
         if(drawingBoardModel.isInitialize() == 0){
             drawingBoardModel.initializeModel(binding.drawingBoard.width, binding.drawingBoard.height)

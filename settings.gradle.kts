@@ -11,6 +11,12 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+
+    versionCatalogs {
+        create("libs") {
+            library("androidx-material3-android", "androidx.compose.material3", "material3-android").withoutVersion()
+        }
+    }
 }
 
 rootProject.name = "Drawing_prototype"

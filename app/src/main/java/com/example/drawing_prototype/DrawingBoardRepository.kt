@@ -4,26 +4,40 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileOutputStream
 
-class DrawingBoardRepository(
-    private val context: Context,
-    private val scope: CoroutineScope){
+class DrawingBoardRepository(private val context: Context, private val scope: CoroutineScope, private val dao: DrawingBoardDao){
 
     private var drawingBoardLiveData: LiveData<List<DrawingBoard>>? = null;
-    private var drawingBoardDao: DrawingBoardDao? = null
 
+    val allDrawingBoard = dao.allDawingBoard()
+
+    /*
     init {
         val db: DrawingBoardDatabase = DrawingBoardDatabase.getDatabase(context.applicationContext)
         drawingBoardDao = db.drawingBoardDao()
     }
 
+     */
+
+    /*
     fun getAllPicture(): LiveData<List<DrawingBoard>>? {
-        return drawingBoardDao?.getAllPicture()
+        return dao.getAllPicture()
     }
+     */
 
     suspend fun savePicture(bitmap: Bitmap, fileName: String): DrawingBoard? {
         return try {
@@ -32,7 +46,7 @@ class DrawingBoardRepository(
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
             }
             val DrawingBoard = DrawingBoard(fileName, System.currentTimeMillis())
-            drawingBoardDao?.apply {
+            dao.apply {
                 val query = getPictureByFileName(fileName)
 
                 if (query == null) {
@@ -41,7 +55,6 @@ class DrawingBoardRepository(
                     updatePicture(System.currentTimeMillis(), query.id)
                 }
 
-
             }
             DrawingBoard
         } catch (e: Exception) {
@@ -49,6 +62,8 @@ class DrawingBoardRepository(
             null
         }
     }
+
+
 
 
     fun storePicture(bitmap: Bitmap, fileName: String) {
@@ -61,6 +76,4 @@ class DrawingBoardRepository(
             }
         }
     }
-
-
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/StartScreenFragment">
+
+    <fragment
+        android:id="@+id/StartScreenFragment"
+        android:name="com.example.drawing_prototype.StartScreenFragment"
+        android:label="fragment_StartScreen"
+        tools:layout="@layout/start_screen" >
+        <action
+            android:id="@+id/action_StartScreenFragment_to_MainMenuFragment"
+            app:destination="@id/MainMenuFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/MainMenuFragment"
+        android:name="com.example.drawing_prototype.MainMenuFragment"
+        android:label="fragment_MainMenu"
+        tools:layout="@layout/fragment_main_menu" >
+        <action
+            android:id="@+id/action_MainMenuFragment_to_drawingBoardFragment"
+            app:destination="@id/DrawingBoardFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/DrawingBoardFragment"
+        android:name="com.example.drawing_prototype.DrawingBoardFragment"
+        android:label="fragment_drawingBoard"
+        tools:layout="@layout/drawing_board" />
+</navigation>

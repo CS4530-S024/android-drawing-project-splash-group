@@ -1,33 +1,33 @@
 package com.example.drawing_prototype
 
 import android.app.Application
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.widget.EditText
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 
 
 // VM contains function to setup the bitmap, store change the pen's size, color, and shape,
 // And draw color on the drawing board touch location
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
-class DrawingBoardModel(application: Application): AndroidViewModel(application) {
+class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewModel() {
     // MutableLiveData for observer changes on current bitmap
+    //private var repository: DrawingBoardRepository? = null
+    val allDrawingBoard : Flow<List<DrawingBoard>> = repository.allDrawingBoard
 
-    private var repository: DrawingBoardRepository? = null
-
-    init {
-        val scope = CoroutineScope(SupervisorJob())
-        repository = DrawingBoardRepository(application.applicationContext, scope)
-    }
 
     lateinit var bitmap: MutableLiveData<Bitmap>
 
@@ -61,10 +61,11 @@ class DrawingBoardModel(application: Application): AndroidViewModel(application)
     fun saveCurrentBitmap(fileName: String) {
         bitmap.value?.let { bmp ->
             viewModelScope.launch {
-                repository?.storePicture(bmp, fileName)
+                repository.storePicture(bmp, fileName)
             }
         }
     }
+
 
     // Update pen type
     fun updateType(string: String){
@@ -112,12 +113,25 @@ class DrawingBoardModel(application: Application): AndroidViewModel(application)
 
     }
 
+/*
+    fun getAllPicture(): LiveData<List<DrawingBoard>> {
+        return repository.allDrawingBoard
+    }
 
-    fun getAllPicture(): LiveData<List<DrawingBoard>>? {
-        return repository?.getAllPicture()
+ */
+}
+
+class DrawingBoardViewModelFactory(private val repository: DrawingBoardRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(DrawingBoardModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return DrawingBoardModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
 
+/*
 class DrawingBoardViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DrawingBoardModel::class.java)) {
@@ -127,3 +141,5 @@ class DrawingBoardViewModelFactory(private val application: Application) : ViewM
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+
+ */
