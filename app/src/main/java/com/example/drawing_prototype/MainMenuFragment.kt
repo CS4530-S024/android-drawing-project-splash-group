@@ -37,6 +37,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.Card
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -142,46 +143,65 @@ fun Drawingboard(painter: Painter, fileName: String, vm : DrawingBoardModel, nav
             .background(MaterialTheme.colorScheme.surface)
             .padding(8.dp)
             .fillMaxWidth()
+
     ) {
-        Row(modifier = Modifier.padding(all = 8.dp)) {
-            Box(
-                modifier = Modifier
-                    .height(150.dp)
-                    .padding(7.dp)
-            ) {
-                Image(painter = painter, contentDescription = "Pikachu")
+        Box(modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center){
+            Image(
+                painter = painterResource(id = R.drawable.cardbackgroundimage01),
+                contentDescription = "Background Image",
+                modifier = Modifier.matchParentSize(),
+                contentScale = ContentScale.Crop
+            )
+            Row(modifier = Modifier.padding(all = 8.dp)) {
+                Box(
+                    modifier = Modifier
+                        .height(150.dp)
+                        .padding(7.dp)
+                        .background(Color.LightGray)
 
-            }
-            Column(modifier = Modifier.padding(all = 8.dp)) {
-                Text(
-                    text = fileName,
-                    fontSize = 24.sp,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
-                    modifier = modifier.padding(10.dp)
-                )
-                //val uriHandler = LocalUriHandler.current
-                Button(
-                    modifier = modifier.padding(top = 30.dp, start = 45.dp, end = 45.dp, bottom = 10.dp).height(50.dp).width(100.dp),
-                    contentPadding = PaddingValues(
-                        top = 0.dp,
-                        bottom = 0.dp,
-                        start = 16.dp,
-                        end = 16.dp
-                    ),
-                    onClick = {
-                        // to do
-                        vm.openOldDrawingBoard(fileName)
-                        navController.navigate(R.id.action_MainMenuFragment_to_drawingBoardFragment)
+                ) {
+                    Box(modifier = Modifier
+                        .height(150.dp)
+                        .padding(6.dp)){
+                            Image(painter = painter, contentDescription = "Pikachu")
+                        }
+                    //Image(painter = painter, contentDescription = "Pikachu")
 
-                    }) {
+                }
+                Column(modifier = Modifier.padding(all = 8.dp)) {
                     Text(
-                        text = "open",
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(0.dp),
+                        text = fileName,
+                        fontSize = 24.sp,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
+                        modifier = modifier.padding(10.dp)
                     )
+                    //val uriHandler = LocalUriHandler.current
+                    Button(
+                        modifier = modifier.padding(top = 30.dp, start = 45.dp, end = 45.dp, bottom = 10.dp).height(50.dp).width(75.dp),
+                        contentPadding = PaddingValues(
+                            top = 0.dp,
+                            bottom = 0.dp,
+                            start = 16.dp,
+                            end = 16.dp
+                        ),
+                        onClick = {
+                            // to do
+                            vm.openOldDrawingBoard(fileName)
+                            navController.navigate(R.id.action_MainMenuFragment_to_drawingBoardFragment)
+
+                        }) {
+                        Text(
+                            text = "open",
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(0.dp),
+                        )
+                    }
                 }
             }
         }
+
+
     }
 }
 
