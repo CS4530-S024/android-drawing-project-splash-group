@@ -83,7 +83,7 @@ fun MyComposable(navController: NavController, modifier:Modifier = Modifier, vie
             onClick = onClick){
                 Text(color = MaterialTheme.colorScheme.onTertiaryContainer,
                     text ="+ New Drawingboard")
-
+                viewModel.initializeModel(1100,1100)
             }
          })
         {
