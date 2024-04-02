@@ -176,32 +176,52 @@ fun Drawingboard(painter: Painter, fileName: String, vm : DrawingBoardModel, nav
                         color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                         modifier = modifier.padding(10.dp)
                     )
+                    Row(modifier = Modifier.padding(all = 8.dp)) {
                     //val uriHandler = LocalUriHandler.current
-                    Button(
-                        modifier = modifier.padding(top = 30.dp, start = 45.dp, end = 45.dp, bottom = 10.dp).height(50.dp).width(75.dp),
-                        contentPadding = PaddingValues(
-                            top = 0.dp,
-                            bottom = 0.dp,
-                            start = 16.dp,
-                            end = 16.dp
-                        ),
-                        onClick = {
-                            // to do
-                            vm.openOldDrawingBoard(fileName)
-                            navController.navigate(R.id.action_MainMenuFragment_to_drawingBoardFragment)
+                        Button(
+                            modifier = modifier.padding(top = 30.dp, start = 10.dp, end = 5.dp, bottom = 10.dp).height(50.dp).width(75.dp),
+                            contentPadding = PaddingValues(
+                                top = 0.dp,
+                                bottom = 0.dp,
+                                start = 16.dp,
+                                end = 16.dp
+                            ),
+                            onClick = {
+                                // to do
+                                vm.openOldDrawingBoard(fileName)
+                                navController.navigate(R.id.action_MainMenuFragment_to_drawingBoardFragment)
 
-                        }) {
-                        Text(
-                            text = "open",
-                            style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.padding(0.dp),
-                        )
+                            }) {
+                            Text(
+                                text = "open",
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(0.dp),
+                            )
+                        }
+
+                        Button(
+                            modifier = modifier.padding(top = 30.dp, start = 5.dp, end = 10.dp, bottom = 10.dp).height(50.dp).width(75.dp),
+                            contentPadding = PaddingValues(
+                                top = 0.dp,
+                                bottom = 0.dp,
+                                start = 16.dp,
+                                end = 16.dp
+                            ),
+                            onClick = {
+                                // to do
+
+                            }) {
+                            Text(
+                                text = "delete",
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(0.dp),
+                            )
+                        }
+
                     }
                 }
             }
         }
-
-
     }
 }
 
