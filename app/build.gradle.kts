@@ -120,4 +120,7 @@ dependencies {
     androidTestImplementation("androidx.room:room-testing:2.6.1")
     androidTestImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 
+    //splashscreen
+    implementation("androidx.core:core-splashscreen:1.0.0")
+
 }

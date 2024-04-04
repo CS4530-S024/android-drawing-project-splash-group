@@ -4,11 +4,14 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
 import android.os.Bundle
+import android.view.Window
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -31,11 +34,19 @@ internal fun Context.findActivity(): ComponentActivity {
 class MainActivity : AppCompatActivity() {
     lateinit var drawingBoardModel: DrawingBoardModel
 
-
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             enableEdgeToEdge()
+
+            installSplashScreen()
+
+            //requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+
 
             val factory = DrawingBoardViewModelFactory((application as DrawingBoardApplication).DrawingBoardRepository)
             drawingBoardModel = ViewModelProvider(this, factory).get(DrawingBoardModel::class.java)
