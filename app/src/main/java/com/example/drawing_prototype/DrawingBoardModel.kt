@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.widget.EditText
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -34,7 +35,9 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
     private var initialize: Int = 0
     // Initial pen
     val paint = Paint()
+    val eraser_paint = Paint()
     var size_of_paint: Float = 20.0f
+    var size_of_eraser: Float = 20.0f
     var paint_type = "circle"
     var filename = ""
     // Canvas for the bitmap, use for drawing
@@ -113,28 +116,53 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
     }
 
     //draws to our bitmap.
-    fun draw(x: Float, y: Float){
+    fun draw(path: Path){
         when(paint_type){
 
-            "circle" -> drawCircle(x, y)
-            "rectangle" -> drawRectangle(x, y)
+            "circle" -> drawCircle(path)
+            "rectangle" -> drawRectangle(path)
+            "eraser" -> eraser(path)
 
         }
     }
 
-    // Draw a circle on the bitmap at input location
-    fun drawCircle(x: Float, y: Float){
+    // Erase the Line that have draw
+    private fun eraser(path: Path) {
 
-        bitmapCanvas.drawCircle(x, y, size_of_paint, paint)
+        eraser_paint.strokeWidth = size_of_eraser
+        paint.color = Color.WHITE
+        paint.style = Paint.Style.STROKE
+        paint.isAntiAlias = true
+        paint.strokeJoin = Paint.Join.ROUND
+        paint.strokeCap = Paint.Cap.ROUND
+        bitmapCanvas.drawPath(path, paint)
+        bitmap.value = bitmap.value
+
+    }
+
+    // Draw a circle on the bitmap at input location
+    fun drawCircle(path: Path){
+
+        paint.strokeWidth = size_of_paint
+        paint.style = Paint.Style.STROKE
+        paint.isAntiAlias = true
+        paint.strokeJoin = Paint.Join.ROUND
+        paint.strokeCap = Paint.Cap.ROUND
+        bitmapCanvas.drawPath(path, paint)
         bitmap.value = bitmap.value
 
     }
 
     // Draw a rectangle on the bitmap at input location
-    fun  drawRectangle(x: Float, y: Float){
+    fun  drawRectangle(path: Path){
 
-        bitmapCanvas.drawRect(x-size_of_paint, y+size_of_paint,
-            x+size_of_paint, y-size_of_paint, paint )
+        paint.strokeWidth = size_of_paint
+        paint.style = Paint.Style.STROKE
+        paint.isAntiAlias = true
+        paint.strokeJoin = Paint.Join.ROUND
+        paint.strokeCap = Paint.Cap.SQUARE
+//        paint.strokeCap = Paint.Cap.ROUND
+        bitmapCanvas.drawPath(path, paint)
         bitmap.value = bitmap.value
 
     }

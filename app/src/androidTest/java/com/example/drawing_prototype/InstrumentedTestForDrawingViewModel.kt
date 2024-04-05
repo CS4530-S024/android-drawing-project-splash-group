@@ -1,7 +1,12 @@
 package com.example.drawing_prototype
 
+//import org.mockito.Mockito.mock
+
+
+import android.R.attr.path
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Path
 import androidx.lifecycle.Observer
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.room.Room
@@ -11,16 +16,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
-//import org.mockito.Mockito.mock
-
-
-import org.junit.Test
-import org.junit.runner.RunWith
-
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.io.File
+
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -48,6 +49,7 @@ class InstrumentedTestForDrawingViewModel {
             context, DrawingBoardDatabase::class.java).allowMainThreadQueries().build()
         val dao = db.drawingBoardDao()
 
+
         repository = DrawingBoardRepository(context, testScope, dao)
         model = DrawingBoardModel(repository).apply {
             initializeModel(1100, 1100)
@@ -64,6 +66,9 @@ class InstrumentedTestForDrawingViewModel {
         withContext(Dispatchers.Main){
             var callbackFired = false
             val observer = Observer<android.graphics.Bitmap> {callbackFired = true}
+            val path = Path()
+            path.moveTo(100f, 100f)
+            path.lineTo(200f, 100f);
 
             //test initialize
             assertNotNull("Bitmap can not be null after initialization", model.bitmap.value)
@@ -89,14 +94,14 @@ class InstrumentedTestForDrawingViewModel {
             //test draw circle
             callbackFired = false
             model.bitmap.observe(lifecycleOwner,observer)
-            model.drawCircle(100f,100f)
+            model.drawCircle(path)
             assertTrue("Draw a circle can be triggered bitmap observer",callbackFired)
             model.bitmap.removeObserver(observer)
 
             //test draw rectangle
             callbackFired = false
             model.bitmap.observe(lifecycleOwner,observer)
-            model.drawRectangle(100f,100f)
+            model.drawRectangle(path)
             assertTrue("Draw a rectangle can be triggered bitmap observer",callbackFired)
             model.bitmap.removeObserver(observer)
 

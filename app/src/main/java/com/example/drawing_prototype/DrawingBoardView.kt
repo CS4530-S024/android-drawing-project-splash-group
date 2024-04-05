@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -15,6 +16,8 @@ class DrawingBoardView(context: Context, attrs: AttributeSet) : View(context, at
 
     private lateinit var bitmap: Bitmap
     private lateinit var paint: Paint
+    private var lastX = 0f
+    private var lastY = 0f
 
     private val rect: Rect by lazy { Rect(6,4,width, height) }
 
@@ -26,19 +29,39 @@ class DrawingBoardView(context: Context, attrs: AttributeSet) : View(context, at
 
     fun setupTouchHandler() {
         setOnTouchListener { v, event ->
-
             val x = event.x
             val y = event.y
 
-            when(event.action) {
-                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+
+                    lastX = x
+                    lastY = y
                     v.performClick()
-                    (context as? MainActivity)?.drawingBoardModel?.draw(x, y)
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    // Interpolate between the last and current points
+                    interpolateAndDraw(lastX, lastY, x, y)
+                    lastX = x
+                    lastY = y
+                    v.performClick()
                     true
                 }
                 else -> false
             }
         }
+    }
+
+    private fun interpolateAndDraw(fromX: Float, fromY: Float, toX: Float, toY: Float) {
+        // Pseudo-code to interpolate between points and draw
+        // This should actually draw on a bitmap or a canvas that you manage.
+        val path = Path()
+        path.moveTo(fromX, fromY)
+        path.lineTo(toX, toY)
+        // Use your paint and canvas to draw the path
+        // e.g., canvas.drawPath(path, paint)
+        (context as? MainActivity)?.drawingBoardModel?.draw(path) // Adjust this method to your actual drawing method
     }
 
 
