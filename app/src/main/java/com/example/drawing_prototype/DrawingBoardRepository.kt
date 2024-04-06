@@ -99,4 +99,12 @@ class DrawingBoardRepository(private val context: Context, private val scope: Co
             }
         }
     }
+
+    suspend fun getPictureByFileName(fileName: String): DrawingBoard? {
+        var drawingBoard: DrawingBoard? = null
+        scope.launch {
+            drawingBoard = dao.getPictureByFileName(fileName)
+        }.join()
+        return drawingBoard
+    }
 }

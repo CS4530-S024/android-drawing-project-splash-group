@@ -13,6 +13,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withContext
@@ -134,5 +135,33 @@ class InstrumentedTestForDrawingViewModel {
         }
     }
 
+    @Test
+    fun testDeletePicture() = runBlocking {
+        withContext(Dispatchers.Main) {
+            val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+            val fileName = "test_image_for_delete"
+
+            // Save the image first to make sure anything can be deleted
+            val savedDrawingBoard = repository.savePicture(bitmap, fileName)
+            assertNotNull("Bitmap should be saved before testing delete", savedDrawingBoard)
+
+            // Verify file existence
+            val file = File(context.filesDir, "$fileName.png")
+            assertTrue("File should exist before deletion", file.exists())
+
+            // Perform a delete operation
+            model.deleteOldDrawingBoard(fileName)
+
+            // Wait for the deletion to complete
+            delay(1000)
+
+            // Verify that the image has been deleted from the database
+            val deletedDrawingBoard = repository.getPictureByFileName(fileName)
+            assertNull("DrawingBoard should be null after deletion", deletedDrawingBoard)
+
+            // Verify that the file has been deleted
+            assertFalse("File should not exist after deletion", file.exists())
+        }
+    }
 
 }
