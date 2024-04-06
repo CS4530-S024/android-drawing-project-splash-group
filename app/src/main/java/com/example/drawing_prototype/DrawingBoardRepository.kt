@@ -68,4 +68,35 @@ class DrawingBoardRepository(private val context: Context, private val scope: Co
             }
         }
     }
+
+    suspend fun deletePicture(fileName: String): Boolean {
+        return try {
+            val picture = dao.getPictureByFileName(fileName)
+            if (picture != null) {
+                dao.deletePicture(picture)
+
+                val file = File(context.filesDir, "$fileName.png")
+                if (file.exists()) {
+                    file.delete()
+                }
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("DrawingBoardRepository", "Error deleting picture: ${e.message}")
+            false
+        }
+    }
+
+    fun removePicture(fileName: String) {
+        scope.launch {
+            val isDeleted = deletePicture(fileName)
+            if (isDeleted) {
+                Log.d("DrawingBoardRepository", "Picture deleted successfully")
+            } else {
+                Log.e("DrawingBoardRepository", "Error deleting picture")
+            }
+        }
+    }
 }

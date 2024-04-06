@@ -209,7 +209,7 @@ fun Drawingboard(painter: Painter, fileName: String, vm : DrawingBoardModel, nav
                             ),
                             onClick = {
                                 // to do
-
+                                vm.deleteOldDrawingBoard(fileName)
                             }) {
                             Text(
                                 text = "delete",

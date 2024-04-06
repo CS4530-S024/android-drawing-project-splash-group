@@ -90,6 +90,13 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         initializeModel(1100, 1100, fileName)
         drawBitmap(Bitmap)
     }
+
+    fun deleteOldDrawingBoard(fileName: String) {
+
+        repository.removePicture(fileName)
+
+    }
+
     // Update pen type
     fun updateType(string: String){
         paint_type = string
