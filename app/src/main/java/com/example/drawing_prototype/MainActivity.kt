@@ -2,6 +2,7 @@ package com.example.drawing_prototype
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.view.Window
@@ -32,6 +33,14 @@ internal fun Context.findActivity(): ComponentActivity {
 }
 
 class MainActivity : AppCompatActivity() {
+
+//    init {
+//         System.loadLibrary("drawing_prototype")
+//    }
+//
+//    private external fun invertColors(bitmap: Bitmap)
+//    private external fun CW_90Degree(bitmap: Bitmap): Bitmap
+
     lateinit var drawingBoardModel: DrawingBoardModel
 
         @RequiresApi(Build.VERSION_CODES.O)

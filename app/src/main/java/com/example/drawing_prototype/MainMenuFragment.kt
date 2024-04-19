@@ -71,6 +71,14 @@ class MainMenuFragment : Fragment() {
     }
 }
 
+//@Preview(showBackground = true)
+//@Composable
+//fun MainMenuPreview() {
+//
+//
+//
+//}
+
 @Composable
 fun MyComposable(navController: NavController, modifier:Modifier = Modifier, viewModel: DrawingBoardModel = viewModel(
     viewModelStoreOwner = LocalContext.current.findActivity()

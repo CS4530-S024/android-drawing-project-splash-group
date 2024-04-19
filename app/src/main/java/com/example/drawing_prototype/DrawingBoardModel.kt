@@ -25,10 +25,24 @@ import kotlinx.coroutines.flow.Flow
 // And draw color on the drawing board touch location
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
 class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewModel() {
+
+    init {
+         System.loadLibrary("drawing_prototype")
+    }
+
+    private external fun invertColors(bitmap: Bitmap)
+    private external fun CW_90Degree(bitmap: Bitmap): Bitmap
+
+    // Use example:
+    //        bitmap.value?.let { invertColors(it) }
+    //        bitmap.value = bitmap.value
+    //        bitmap.value?.let {bitmap.value = CW_90Degree(it)}
+
     // MutableLiveData for observer changes on current bitmap
     //private var repository: DrawingBoardRepository? = null
     val allDrawingBoard : Flow<List<DrawingBoard>> = repository.allDrawingBoard
 
+//    private external fun invertColors(bitmap: Bitmap)
 
     lateinit var bitmap: MutableLiveData<Bitmap>
 
@@ -55,6 +69,20 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         size_of_paint = 20.0f
         initialize = 1
         filename = ""
+    }
+
+
+    fun InvertPixel(){
+        bitmap.value?.let { invertColors(it) }
+        bitmap.value = bitmap.value
+    }
+
+    fun CW_rotate(){
+        bitmap.value?.let {bitmap.value = CW_90Degree(it)}
+    }
+
+    fun createBitmap(width: Int, height: Int, config: Bitmap.Config): Bitmap {
+        return Bitmap.createBitmap(width, height, config)
     }
 
     fun initializeModel(width : Int, height : Int, fileName:String){
@@ -118,6 +146,10 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         size_of_paint = size
     }
 
+    fun updateSizeOfEraser(size: Float){
+        size_of_eraser = size
+    }
+
     fun isInitialize(): Int {
         return initialize
     }
@@ -137,12 +169,12 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
     private fun eraser(path: Path) {
 
         eraser_paint.strokeWidth = size_of_eraser
-        paint.color = Color.WHITE
-        paint.style = Paint.Style.STROKE
-        paint.isAntiAlias = true
-        paint.strokeJoin = Paint.Join.ROUND
-        paint.strokeCap = Paint.Cap.ROUND
-        bitmapCanvas.drawPath(path, paint)
+        eraser_paint.color = Color.WHITE
+        eraser_paint.style = Paint.Style.STROKE
+        eraser_paint.isAntiAlias = true
+        eraser_paint.strokeJoin = Paint.Join.ROUND
+        eraser_paint.strokeCap = Paint.Cap.ROUND
+        bitmapCanvas.drawPath(path, eraser_paint)
         bitmap.value = bitmap.value
 
     }

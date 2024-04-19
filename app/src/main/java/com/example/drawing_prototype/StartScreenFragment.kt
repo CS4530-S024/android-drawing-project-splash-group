@@ -70,18 +70,6 @@ fun MyStartScreen(modifier: Modifier = Modifier,
 
     Column(modifier = modifier.padding(start = 45.dp, top = 600.dp, end = 45.dp, bottom = 16.dp)
     ) {
-        //currentCount can be used like an int and when the flow/state
-        //changes it will trigger recomposition of everything that
-        /*
-            Box(
-                modifier = Modifier
-                    .height(500.dp)
-                    .padding(7.dp)
-            ) {
-                Image(painter = painterResource(id = R.drawable.start), contentDescription = "Your Image Description")
-            }
-
-         */
 
         Button(
             modifier = modifier.padding(10.dp).height(50.dp).width(230.dp),
@@ -94,10 +82,6 @@ fun MyStartScreen(modifier: Modifier = Modifier,
 
         }
 
-        //depends on currentCount
-        //Button(onClick = onClick) {
-        //    Text("start")
-        //}
     }
 
 }
@@ -119,61 +103,3 @@ fun SetBackgroundImageScreen() {
 fun BackgroundImageScreenPreview() {
     SetBackgroundImageScreen()
 }
-
-    /*
-    private lateinit var binding: StartScreenBinding
-    //private var startButtonListener : () -> Unit = {}
-
-    lateinit var drawingBoardModel: DrawingBoardModel
-
-    //fun setStartButtonFunction(newFunc: () -> Unit) {
-    //    startButtonListener = newFunc
-    //}
-
-    // This function inflates the fragment layout and initializes the back button listener
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        binding.startButton.setOnClickListener {
-            //startButtonListener()
-            findNavController().navigate(R.id.action_composableFragment1_to_fragment2)
-        }
-
-        binding = StartScreenBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-//        drawingBoardModel.getAllPicture()?.observe(viewLifecycleOwner,
-//            object : Observer<List<DrawingBoard>> {
-//                override fun onChanged(value: List<DrawingBoard>) {
-//                    val a = 1
-//                }
-//            })
-
-        // Setup a click listener for the start button
-
-        binding.openDrawingBroadButton.setOnClickListener {
-            val fileName = binding.fileNameEditText.text.toString()
-            if (fileName.isNotEmpty()) {
-                val filePath = "${requireContext().filesDir}/$fileName.png"
-                if (File(filePath).exists()) {
-                    val localBitmap = BitmapFactory.decodeFile(filePath)
-                    drawingBoardModel.initializeModel(1100, 1100)
-                    drawingBoardModel.drawBitmap(localBitmap)
-                    startButtonListener()
-                }
-                else{
-                    Toast.makeText(context, "Your input file name is not exist", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
-     */

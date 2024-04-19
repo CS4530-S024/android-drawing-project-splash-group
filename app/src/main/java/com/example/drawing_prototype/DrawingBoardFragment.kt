@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.annotation.RequiresApi
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -58,6 +59,9 @@ class DrawingBoardFragment : Fragment() {
         setupTextChangeWatcher()
         setupColorAndShapeSelectors()
 
+        binding.eraserSizeBox.setText(drawingBoardModel.size_of_eraser.toString())
+        binding.penSizeBox.setText(drawingBoardModel.size_of_paint.toString())
+
         drawingBoardModel.bitmap.observe(viewLifecycleOwner, Observer {
             binding.drawingBoard.updateBitmap(it)
         })
@@ -101,7 +105,7 @@ class DrawingBoardFragment : Fragment() {
 
         // paint shape change click listener
         binding.circle.setOnClickListener { drawingBoardModel.updateType("circle") }
-        binding.rectangle.setOnClickListener { drawingBoardModel.updateType("rectangle") }
+        binding.rectangle.setOnClickListener { drawingBoardModel.updateType("eraser") }
     }
 
     // Sets up a listener for change the pen size
@@ -125,6 +129,26 @@ class DrawingBoardFragment : Fragment() {
                 }
             }
 
+        })
+
+        binding.eraserSizeBox.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            // update the pen size in VM
+            override fun afterTextChanged(s: Editable?) {
+                s?.toString()?.toFloatOrNull().let {
+                    if (it != null) {
+                        drawingBoardModel.updateSizeOfEraser(it)
+                    }
+                }
+            }
         })
     }
 }
