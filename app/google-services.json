@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "992791776034",
+    "project_id": "drawing-prototype",
+    "storage_bucket": "drawing-prototype.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992791776034:android:6592ab2ac53c5553e6737b",
+        "android_client_info": {
+          "package_name": "com.example.drawing_prototype"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMQIw034BIsofdbwLA0Z_JcO3W2ZbTrsk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
