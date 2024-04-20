@@ -83,7 +83,14 @@ class DrawingBoardFragment : Fragment() {
             }else{
                 drawingBoardModel.saveCurrentBitmap(fn)
             }
+        }
 
+        binding.InvertBitmapButton.setOnClickListener {
+            drawingBoardModel.InvertPixel()
+        }
+
+        binding.rotationBitmapButton.setOnClickListener{
+            drawingBoardModel.CW_rotate()
         }
     }
 

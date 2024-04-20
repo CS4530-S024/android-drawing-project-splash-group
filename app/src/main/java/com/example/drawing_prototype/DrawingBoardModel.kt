@@ -113,12 +113,19 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         }
     }
 
+    // Load old drawing board data from the local save
     fun openOldDrawingBoard(fileName: String){
         val Bitmap = repository.loadBitmap(fileName)
         initializeModel(1100, 1100, fileName)
         drawBitmap(Bitmap)
     }
 
+    // Load old drawing board data from cloud
+    fun loadDrawingBoardFromCould(fileName: String){
+
+    }
+
+    // Delete the selected drawing board data
     fun deleteOldDrawingBoard(fileName: String) {
 
         repository.removePicture(fileName)
@@ -133,8 +140,6 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
     fun checkFileName(): String{
         return filename
     }
-
-
 
     // Update pen color
     fun updatePaintColor(color: Int){

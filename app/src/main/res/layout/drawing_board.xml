@@ -120,11 +120,34 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/functionButtonLayout"
+                    android:layout_width="82dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingStart="5dp"
+                    >
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/saveBitmapButton"
                     android:text="save"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/InvertBitmapButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="invert" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/rotationBitmapButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="rotate" />
+                 </LinearLayout>
+
+
             </LinearLayout>
 
 

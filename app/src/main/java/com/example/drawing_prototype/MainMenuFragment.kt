@@ -49,12 +49,9 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import java.io.File
 
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MainMenuFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+// This MainMenuFragment displays the main menu screen of the application
+// This class contains function to use the Jetpack compose to generate the drawing board lists
+// Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
 class MainMenuFragment : Fragment() {
     lateinit var drawingBoardModel: DrawingBoardModel
     override fun onCreateView(inflater: LayoutInflater, container:ViewGroup?, savedInstanceState: Bundle?
@@ -74,10 +71,6 @@ class MainMenuFragment : Fragment() {
 //@Preview(showBackground = true)
 //@Composable
 //fun MainMenuPreview() {
-//
-//
-//
-//}
 
 @Composable
 fun MyComposable(navController: NavController, modifier:Modifier = Modifier, viewModel: DrawingBoardModel = viewModel(
@@ -143,7 +136,7 @@ fun SayHello(){
     Text("Hello!")
 }
 
-
+// Generate the saved drawing board card base on the input values.
 @Composable
 fun Drawingboard(painter: Painter, fileName: String, vm : DrawingBoardModel, navController: NavController, modifier: Modifier = Modifier) {
     Card(
@@ -178,16 +171,38 @@ fun Drawingboard(painter: Painter, fileName: String, vm : DrawingBoardModel, nav
 
                 }
                 Column(modifier = Modifier.padding(all = 8.dp)) {
+                    //File name text
                     Text(
                         text = fileName,
                         fontSize = 24.sp,
                         color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                         modifier = modifier.padding(10.dp)
                     )
+                    // Load button
+                    Button(
+                        modifier = modifier.padding(top = 8.dp, start = 25.dp, end = 5.dp, bottom = 0.dp).height(40.dp).width(140.dp),
+                        contentPadding = PaddingValues(
+                            top = 0.dp,
+                            bottom = 0.dp,
+                            start = 10.dp,
+                            end = 10.dp
+                        ),
+                        onClick = {
+                            // to do
+                            vm.loadDrawingBoardFromCould(fileName);
+                        }) {
+                        Text(
+                            text = "load from cloud",
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(0.dp),
+                        )
+                    }
+
                     Row(modifier = Modifier.padding(all = 8.dp)) {
                     //val uriHandler = LocalUriHandler.current
+                        // Open button
                         Button(
-                            modifier = modifier.padding(top = 30.dp, start = 10.dp, end = 5.dp, bottom = 10.dp).height(50.dp).width(75.dp),
+                            modifier = modifier.padding(top = 5.dp, start = 10.dp, end = 5.dp, bottom = 0.dp).height(40.dp).width(75.dp),
                             contentPadding = PaddingValues(
                                 top = 0.dp,
                                 bottom = 0.dp,
@@ -206,9 +221,9 @@ fun Drawingboard(painter: Painter, fileName: String, vm : DrawingBoardModel, nav
                                 modifier = Modifier.padding(0.dp),
                             )
                         }
-
+                        //Delete button
                         Button(
-                            modifier = modifier.padding(top = 30.dp, start = 5.dp, end = 10.dp, bottom = 10.dp).height(50.dp).width(75.dp),
+                            modifier = modifier.padding(top = 5.dp, start = 5.dp, end = 10.dp, bottom = 0.dp).height(40.dp).width(75.dp),
                             contentPadding = PaddingValues(
                                 top = 0.dp,
                                 bottom = 0.dp,
