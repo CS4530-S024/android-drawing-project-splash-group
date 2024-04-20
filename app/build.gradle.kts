@@ -143,4 +143,7 @@ dependencies {
     //splashscreen
     implementation("androidx.core:core-splashscreen:1.0.0")
 
+    implementation ("com.google.firebase:firebase-storage:20.0.1")
+
+
 }

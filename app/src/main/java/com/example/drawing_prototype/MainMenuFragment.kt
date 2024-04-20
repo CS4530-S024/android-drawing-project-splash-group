@@ -189,7 +189,7 @@ fun Drawingboard(painter: Painter, fileName: String, vm : DrawingBoardModel, nav
                         ),
                         onClick = {
                             // to do
-                            vm.loadDrawingBoardFromCould(fileName);
+                            vm.UploadDrawingBoardFromCould(fileName);
                         }) {
                         Text(
                             text = "load from cloud",

@@ -2,21 +2,18 @@ package com.example.drawing_prototype
 
 import android.content.Context
 import android.content.ContextWrapper
-import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
-import android.view.Window
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.storage.FirebaseStorage
 
 //import com.example.drawing_prototype.databinding.ActivityMainBinding
 
@@ -34,12 +31,7 @@ internal fun Context.findActivity(): ComponentActivity {
 
 class MainActivity : AppCompatActivity() {
 
-//    init {
-//         System.loadLibrary("drawing_prototype")
-//    }
-//
-//    private external fun invertColors(bitmap: Bitmap)
-//    private external fun CW_90Degree(bitmap: Bitmap): Bitmap
+    lateinit var storage: FirebaseStorage
 
     lateinit var drawingBoardModel: DrawingBoardModel
 
@@ -50,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
             installSplashScreen()
 
-            //requestWindowFeature(Window.FEATURE_NO_TITLE);
+            storage = FirebaseStorage.getInstance()
 
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -59,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
             val factory = DrawingBoardViewModelFactory((application as DrawingBoardApplication).DrawingBoardRepository)
             drawingBoardModel = ViewModelProvider(this, factory).get(DrawingBoardModel::class.java)
+            drawingBoardModel.getAllImageName()
 
             setContentView(R.layout.activity_main)
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->

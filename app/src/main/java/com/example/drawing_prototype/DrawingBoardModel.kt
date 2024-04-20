@@ -1,24 +1,21 @@
 package com.example.drawing_prototype
 
-import android.app.Application
-import android.content.DialogInterface
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import android.widget.EditText
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 
 
 // VM contains function to setup the bitmap, store change the pen's size, color, and shape,
@@ -26,23 +23,30 @@ import kotlinx.coroutines.flow.Flow
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
 class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewModel() {
 
+    var storage =  FirebaseStorage.getInstance()
+    lateinit var imagesName : MutableList<String>
     init {
          System.loadLibrary("drawing_prototype")
     }
 
-    private external fun invertColors(bitmap: Bitmap)
-    private external fun CW_90Degree(bitmap: Bitmap): Bitmap
+    val ONE_MEGABYTE = (1024 * 1024 * 10).toLong()
+    var nameStorageRef = storage.getReference().child("images/imageNames.txt")
 
-    // Use example:
-    //        bitmap.value?.let { invertColors(it) }
-    //        bitmap.value = bitmap.value
-    //        bitmap.value?.let {bitmap.value = CW_90Degree(it)}
+    fun getAllImageName(){
+        nameStorageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener { bytes ->
+            val fileContent = String(bytes)
+            imagesName = fileContent.split("\n").toMutableList()
+        }.addOnFailureListener {exception ->
+            println("Failed to download the file: ${exception.message}")
+        }
+    }
+
+    private external fun invertColors(bitmap: Bitmap)
+    private external fun CW_90Degree(bitmap: Bitmap)
 
     // MutableLiveData for observer changes on current bitmap
     //private var repository: DrawingBoardRepository? = null
     val allDrawingBoard : Flow<List<DrawingBoard>> = repository.allDrawingBoard
-
-//    private external fun invertColors(bitmap: Bitmap)
 
     lateinit var bitmap: MutableLiveData<Bitmap>
 
@@ -78,7 +82,8 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
     }
 
     fun CW_rotate(){
-        bitmap.value?.let {bitmap.value = CW_90Degree(it)}
+        bitmap.value?.let {CW_90Degree(it)}
+        bitmap.value = bitmap.value
     }
 
     fun createBitmap(width: Int, height: Int, config: Bitmap.Config): Bitmap {
@@ -120,8 +125,40 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         drawBitmap(Bitmap)
     }
 
+    fun listToString(list: MutableList<String>): String {
+        return list.joinToString(separator = "\n")
+    }
+
     // Load old drawing board data from cloud
-    fun loadDrawingBoardFromCould(fileName: String){
+    fun UploadDrawingBoardFromCould(fileName: String){
+        val bitmap = repository.loadBitmap(fileName)
+        val storageRef = storage.getReference().child("images/$fileName.png")
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        val data = baos.toByteArray()
+        val uploadTask = storageRef.putBytes(data)
+
+        uploadTask.addOnFailureListener { exception: Exception? ->
+            Log.e("Upload", "Upload failed", exception)
+        }.addOnSuccessListener { taskSnapshot: UploadTask.TaskSnapshot? ->
+            Log.d("Upload", "Upload successful")
+        }
+
+        imagesName.add(fileName)
+        val imageNames = listToString(imagesName).toByteArray()
+        nameStorageRef.putBytes(imageNames)
+
+    }
+
+    fun DownloadDrawingBoardFromCould(){
+
+        for(name in imagesName){
+            val storageRef = storage.getReference().child("images/$name.png")
+            storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener { bytes ->
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                repository.storePicture(bitmap, name)
+            }
+        }
 
     }
 

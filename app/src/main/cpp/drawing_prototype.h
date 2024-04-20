@@ -11,7 +11,7 @@ extern "C" {
 JNIEXPORT void JNICALL
 Java_com_example_drawing_1prototype_DrawingBoardModel_invertColors(JNIEnv *, jobject, jobject bitmap);
 
-JNIEXPORT jobject JNICALL
+JNIEXPORT void JNICALL
 Java_com_example_drawing_1prototype_DrawingBoardModel_CW_90Degree(JNIEnv *, jobject, jobject bitmap);
 #ifdef __cplusplus
 }
