@@ -37,6 +37,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.Card
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -80,6 +81,7 @@ fun MyComposable(navController: NavController, modifier:Modifier = Modifier, vie
         val context = LocalContext.current
         Scaffold(floatingActionButton = {
             ExtendedFloatingActionButton(
+                //modifier = modifier.padding(top = 8.dp, start = 25.dp, end = 5.dp, bottom = 0.dp).height(40.dp).width(140.dp),
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             onClick = onClick){
                 Text(color = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -87,6 +89,7 @@ fun MyComposable(navController: NavController, modifier:Modifier = Modifier, vie
                 viewModel.initializeModel(1100,1100)
             }
          })
+
         {
         Surface(
             modifier = Modifier
@@ -101,12 +104,34 @@ fun MyComposable(navController: NavController, modifier:Modifier = Modifier, vie
                         .background(MaterialTheme.colorScheme.primaryContainer)
 
                     ) {
-                        Text(
-                            text = "Main Menu",
-                            style = TextStyle(color = Color.Black, fontSize = 20.sp),
-                            modifier = Modifier.padding(16.dp),
-                            //style = MaterialTheme.typography.headlineLarge
-                        )
+                        Row(modifier = Modifier.padding(all = 2.dp)) {
+                            Text(
+                                text = "Main Menu",
+                                style = TextStyle(color = Color.Black, fontSize = 20.sp),
+                                modifier = Modifier.padding(16.dp),
+                                //style = MaterialTheme.typography.headlineLarge
+                            )
+
+                            Button(
+                                modifier = modifier.padding(top = 0.dp, start = 45.dp, end = 5.dp, bottom = 0.dp).height(40.dp).width(150.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                                contentPadding = PaddingValues(
+                                    top = 0.dp,
+                                    bottom = 0.dp,
+                                    start = 5.dp,
+                                    end = 5.dp
+
+                                ),
+                                onClick = {
+                                    viewModel.DownloadDrawingBoardFromCould()
+                                }) {
+                                Text(
+                                    text = "download all from cloud",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    modifier = Modifier.padding(0.dp),
+                                )
+                            }
+                        }
                     }
 
                     val list by viewModel.allDrawingBoard.collectAsState(listOf())

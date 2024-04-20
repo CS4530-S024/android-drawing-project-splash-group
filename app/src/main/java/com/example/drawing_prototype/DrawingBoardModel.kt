@@ -75,7 +75,6 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         filename = ""
     }
 
-
     fun InvertPixel(){
         bitmap.value?.let { invertColors(it) }
         bitmap.value = bitmap.value
@@ -151,7 +150,6 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
     }
 
     fun DownloadDrawingBoardFromCould(){
-
         for(name in imagesName){
             val storageRef = storage.getReference().child("images/$name.png")
             storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener { bytes ->
