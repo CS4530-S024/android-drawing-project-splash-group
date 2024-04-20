@@ -23,15 +23,23 @@ import java.io.ByteArrayOutputStream
 // Created by Chengyu Yang, Jiahua Zhao, Yitong Lu
 class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewModel() {
 
+    // Firebase Storage instance for saving and retrieving images
     var storage =  FirebaseStorage.getInstance()
+
+    // List to store names of the images stored in Firebase
     lateinit var imagesName : MutableList<String>
+
+    // Load native library for image processing tasks
     init {
-         System.loadLibrary("drawing_prototype")
+        System.loadLibrary("drawing_prototype")
     }
 
+    // Constant for maximum file download size (10 MB)
     val ONE_MEGABYTE = (1024 * 1024 * 10).toLong()
+    // Reference to the file containing image names in Firebase Storage
     var nameStorageRef = storage.getReference().child("images/imageNames.txt")
 
+    // Retrieves and sets the image names from Firebase
     fun getAllImageName(){
         nameStorageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener { bytes ->
             val fileContent = String(bytes)
@@ -41,6 +49,7 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         }
     }
 
+    // External native methods for image processing
     private external fun invertColors(bitmap: Bitmap)
     private external fun CW_90Degree(bitmap: Bitmap)
 
@@ -48,8 +57,10 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
     //private var repository: DrawingBoardRepository? = null
     val allDrawingBoard : Flow<List<DrawingBoard>> = repository.allDrawingBoard
 
+    // LiveData to observe bitmap changes
     lateinit var bitmap: MutableLiveData<Bitmap>
 
+    // Variable to ensure model is initialized
     private var initialize: Int = 0
     // Initial pen
     val paint = Paint()
@@ -75,20 +86,24 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         filename = ""
     }
 
+    // Apply color inversion on the current bitmap
     fun InvertPixel(){
         bitmap.value?.let { invertColors(it) }
         bitmap.value = bitmap.value
     }
 
+    // Rotate the current bitmap by 90 degrees clockwise
     fun CW_rotate(){
         bitmap.value?.let {CW_90Degree(it)}
         bitmap.value = bitmap.value
     }
 
+    // Helper method to create a new bitmap
     fun createBitmap(width: Int, height: Int, config: Bitmap.Config): Bitmap {
         return Bitmap.createBitmap(width, height, config)
     }
 
+    // Overloaded initializeModel to set a specific file name
     fun initializeModel(width : Int, height : Int, fileName:String){
         paint.color = Color.BLACK
         // Create a new square bitmap with width 1024
@@ -102,6 +117,7 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         filename = fileName
     }
 
+    // Set the current bitmap to a given bitmap
     fun drawBitmap(localBitmap: Bitmap) {
         val mutableBitmap = localBitmap.copy(Bitmap.Config.ARGB_8888, true)
         bitmap.value = mutableBitmap
@@ -128,7 +144,7 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         return list.joinToString(separator = "\n")
     }
 
-    // Load old drawing board data from cloud
+    // Upload a bitmap to Firebase and update the image names list
     fun UploadDrawingBoardFromCould(fileName: String){
         val bitmap = repository.loadBitmap(fileName)
         val storageRef = storage.getReference().child("images/$fileName.png")
@@ -149,6 +165,7 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
 
     }
 
+    // Download images from Firebase and save them locally
     fun DownloadDrawingBoardFromCould(){
         for(name in imagesName){
             val storageRef = storage.getReference().child("images/$name.png")
@@ -186,10 +203,12 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
         size_of_paint = size
     }
 
+    // Update paint and eraser sizes
     fun updateSizeOfEraser(size: Float){
         size_of_eraser = size
     }
 
+    // Check if model is initialized
     fun isInitialize(): Int {
         return initialize
     }
@@ -248,6 +267,7 @@ class DrawingBoardModel(private val repository: DrawingBoardRepository): ViewMod
 
 }
 
+// Factory to instantiate the ViewModel with a repository
 class DrawingBoardViewModelFactory(private val repository: DrawingBoardRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DrawingBoardModel::class.java)) {
